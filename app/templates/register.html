@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+        <h1 class="govuk-heading-l">Register for the site</h1>
+        <form class="govuk-form-group" action="/register" method="post">
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="email-address">
+                    Email address
+                </label>
+                <input class="govuk-input govuk-input--width-20" id="email-address" name="email-address" type="text">
+            </div>
+        </form>
+
+    </main>
+</div>
+
+{% endblock %}

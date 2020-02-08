@@ -40,3 +40,13 @@ def test_login_not_required(client, db):
 def test_login_required(login_required_client):
     rv = login_required_client.get('/')
     assert rv.status_code == 302
+
+
+class TestRegister:
+    def test_get(self, client):
+        rv = client.get('/register')
+        assert rv.status_code == 200
+        assert b"Register for the site" in rv.data
+
+    def test_post(self, client):
+        pass
