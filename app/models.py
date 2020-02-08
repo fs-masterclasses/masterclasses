@@ -8,7 +8,9 @@ class User(UserMixin, db.Model):   # User inherits from db.Model, a base class f
     email = db.Column(db.String(120), nullable=False, index=True, unique=True)  # By indexing a value you can find it more easily in the db
     first_name = db.Column(db.String(50), index=True, unique=False)
     last_name = db.Column(db.String(50), index=True, unique=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=True)
+    draft = db.Column(db.Boolean, default=True)
+
     masterclasses_run = db.relationship('Masterclass', backref='instructor', lazy='dynamic')
     booked_masterclasses = db.relationship('MasterclassAttendee', backref='attendee', lazy='dynamic')
 
