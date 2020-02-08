@@ -2,6 +2,7 @@ import pytest
 
 from app import create_app
 from app import db as _db
+from app.models import User
 from config import *
 
 
@@ -48,5 +49,8 @@ class TestRegister:
         assert rv.status_code == 200
         assert b"Register for the site" in rv.data
 
-    def test_post(self, client):
-        pass
+    def test_post(self, client, db):
+        client.post('/register', data={'email-address': 'test@example.com'})
+        user = User.query.first()
+        assert user.email == 'test@example.com'
+        assert user.draft

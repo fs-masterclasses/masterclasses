@@ -13,6 +13,16 @@ def index():
     return render_template('index.html', title='Home', user=User, masterclasses=masterclasses)
 
 
+@main_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == "POST":
+        u = User(email=request.form['email-address'])
+        db.session.add(u)
+        db.session.commit()
+        return "New user logged! Check your emails :-)"
+    return render_template('register.html')
+
+
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
