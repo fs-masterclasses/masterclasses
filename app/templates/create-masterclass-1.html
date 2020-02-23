@@ -1,0 +1,64 @@
+{%  extends 'base.html' %}
+
+{% block content %}
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+        <h1 class="govuk-heading-l">Create a masterclass</h1>
+        <form class="govuk-form-group" action="" method="get"> {# Ask Jonathan, when do we post data? #}
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--m" for="name">
+                    Name
+                </label>
+                <span class="govuk-hint">Give a name that describes what attendees can expect to learn from your masterclass</span>
+                <input class="govuk-input govuk-!-width-three-quarters" id="name" name="name" type="text">
+                <br><br><br>
+                <label class="govuk-label govuk-label--m" >
+                    Date
+                </label>
+                <span class="govuk-hint">
+                    For example, 12 11 2020
+                </span>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="day">
+                        Day
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="day" name="day" type="text" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="month">
+                        Month
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="month" name="month" type="text" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="year">
+                        Year
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="year" name="year" type="text" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>  
+                <br><br><br>
+                <label class="govuk-label govuk-label--m" for="masterclass-name">
+                    Time
+                </label>
+                <span class="govuk-hint">For example, 15:30</span>
+                <input class="govuk-input govuk-input--width-10" id="time" name="time" type="time">
+                <br><br><br>
+                <label class="govuk-label govuk-label--m" for="masterclass-name">
+                    Maximum number of attendees
+                </label>
+                <span class="govuk-hint">What is the maximum number of people who can attend your masterclass?</span>
+                <input class="govuk-input govuk-input--width-4" id="max_attendees" name="max_attendees" type="number">
+            </div>
+            <div class="continue">
+                <input type="button" value="Continue" class="govuk-button">
+            </div>
+        </form>
+    </main>
+</div>
+{% endblock %}

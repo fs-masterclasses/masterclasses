@@ -61,3 +61,8 @@ def my_masterclasses():
     user = current_user
     booked_masterclasses = user.booked_masterclasses
     return render_template('my-masterclasses.html')
+
+@login_required
+@main_bp.route('/create-masterclass', methods=['GET'])
+def create_masterclasses():
+    return render_template('create-masterclass-1.html')
