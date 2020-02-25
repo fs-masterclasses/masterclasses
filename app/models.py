@@ -31,6 +31,7 @@ class MasterclassContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150))
     description = db.Column(db.String(500))
+    category = db.Column(db.String(200))
     masterclass_instances = db.relationship('Masterclass', backref='content', lazy='dynamic')
 
     def __repr__(self):
