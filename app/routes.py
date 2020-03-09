@@ -67,3 +67,9 @@ def my_masterclasses():
 def create_masterclasses():
     return render_template('create-masterclass/masterclass-content/masterclass-content-1.html')
 
+@login_required
+@main_bp.route('/create-masterclass/existing', methods=['GET'])
+def create_masterclasses_existing():
+    chosen_category = request.args.get('select-job-family')
+    existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_category)
+    return render_template('create-masterclass/masterclass-content/masterclass-content-2.html', existing_masterclasses=existing_masterclasses)
