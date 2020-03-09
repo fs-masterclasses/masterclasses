@@ -1,0 +1,71 @@
+{%  extends "base.html" %}
+
+{% block content %}
+<div class="govuk-width-container">
+  <a href="/" class="govuk-back-link">Back</a>
+
+  <main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <form action="/choose-content" method="post" novalidate>
+
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                  Which DDaT job family is your masterclass related to?
+                </h1>
+              </legend>
+              <span id="sign-in-hint" class="govuk-hint">
+                <a href="https://www.gov.uk/government/collections/digital-data-and-technology-profession-capability-framework#data-job-family">Find out more about the job families</a>
+              </span>
+              <div class="govuk-radios">
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family" name="select-job-family" type="radio" value="data">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family">
+                    Data
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-2" name="select-job-family" type="radio" value="it operations">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-2">
+                    IT operations
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-3" name="select-job-family" type="radio" value="product and delivery">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-3">
+                    Product and delivery
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-4" name="select-job-family" type="radio" value="quality assurance testing">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-4">
+                    Quality assurance testing
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-5" name="select-job-family" type="radio" value="technical">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-5">
+                    Technical
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-6" name="select-job-family" type="radio" value="user-centred design">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-6">
+                    User-centred design
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <button class="govuk-button" data-module="govuk-button">
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

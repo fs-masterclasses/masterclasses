@@ -61,3 +61,14 @@ def my_masterclasses():
     user = current_user
     booked_masterclasses = user.booked_masterclasses
     return render_template('my-masterclasses.html')
+
+@login_required
+@main_bp.route('/choose-content', methods=['GET', 'POST'])
+def choose_content():
+    if request.method == 'GET':
+        return render_template('create-masterclass/content/choose-ddat-family.html')
+    elif request.method == 'POST':    
+        chosen_category = request.form['select-job-family']
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_category)
+        return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
+
