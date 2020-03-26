@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="govuk-width-container">
-  <a href="/create-masterclass" class="govuk-back-link">Back</a>
+  <a href="/choose-content" class="govuk-back-link">Back</a>
 
   <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <form action="/create-masterclass/existing" method="get" novalidate>
+        <form action="/choose-content/new-or-existing/new" method="get" novalidate>
           <div class="govuk-form-group">
             <fieldset class="govuk-fieldset">
               <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
@@ -21,7 +21,8 @@
               <div class="govuk-radios">
                 {% for masterclass in existing_masterclasses %}
                     <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="existing-masterclass" name="existing-masterclass" type="radio" value={{masterclass.name}}>
+                        <input class="govuk-radios__input" id="existing-masterclass" name="which-masterclass" type="radio" value={{masterclass.name}}>
+                        {# How do I add index of masterclass in list of existing to id? {{exiting_masterclasses.index(masterclass)}} ? #}
                         <label class="govuk-label govuk-radios__label" for="select-job-family">
                             {{masterclass.name}}
                         </label>
@@ -31,7 +32,7 @@
                     </div>
                  {% endfor %}
                  <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="new_masterclass_option" name="new_masterclass_option" type="radio" value="new masterclass">
+                        <input class="govuk-radios__input" id="new_masterclass_option" name="which-masterclass" type="radio" value="new masterclass">
                         <label class="govuk-label govuk-radios__label" for="select-job-family">
                             I want to run a new masterclass
                         </label>

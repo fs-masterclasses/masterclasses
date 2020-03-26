@@ -63,13 +63,30 @@ def my_masterclasses():
     return render_template('my-masterclasses.html')
 
 @login_required
-@main_bp.route('/create-masterclass', methods=['GET'])
-def create_masterclasses():
+@main_bp.route('/choose-content', methods=['GET'])
+def choose_content():
     return render_template('create-masterclass/masterclass-content/masterclass-content-1.html')
 
 @login_required
-@main_bp.route('/create-masterclass/existing', methods=['GET'])
-def create_masterclasses_existing():
+@main_bp.route('/choose-content/new-or-existing', methods=['GET'])
+def choose_new_or_existing_content():
     chosen_category = request.args.get('select-job-family')
     existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_category)
     return render_template('create-masterclass/masterclass-content/masterclass-content-2.html', existing_masterclasses=existing_masterclasses)
+
+@login_required
+@main_bp.route('/choose-content/new-or-existing/new', methods=['GET', 'POST'])
+def create_new_content():
+    new_or_existing = request.args.get('which-masterclass')
+    if request.method == 'GET':    
+        if new_or_existing =="new masterclass":
+            return render_template('create-masterclass/masterclass-content/masterclass-content-3.html')
+        elif new_or_existing == "An": # I want to say if new_or_existing is anything else...
+            return redirect(url_for('main_bp.index')) # And pass the content they chose in too?
+    elif request.method == 'POST':
+            new_masterclass_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
+            db.session.add(new_masterclass_content) 
+            db.session.commit()
+            return redirect(url_for('main_bp.index')) # will take them back to main create masterclass page
+    else:
+        return render_template('create-masterclass/masterclass-content/masterclass-content-2.html')
