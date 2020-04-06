@@ -7,12 +7,12 @@ from app import db as _db
 from config import *
 from app.models import MasterclassContent
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_app():
     app = create_app(TestConfig)
     yield app
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def client(test_app):
     with test_app.test_client() as client:
         yield client
@@ -24,7 +24,7 @@ def login_required_client():
     with app.test_client() as client:
         yield client
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def db(client):
     """
     This takes the FlaskClient object and applies it to the database.app attribute. Once this fixture is finished with, it drops everything in there
@@ -74,11 +74,10 @@ def captured_templates(app):
     ('/choose-content/new-or-existing', {'which-masterclass': 'new masterclass'}, 'create-masterclass/content/create-new.html'),
     ('/choose-content/create-new', {'which-masterclass': 'An'}, 'index.html'),
 ))
-def test_when_user_selects_create_new_masterclass_content_it_shows_masterclass_content_form(test_app, db, new_masterclass_content_data_category, endpoint, data, expected_template):
+def test_when_user_selects_create_new_masterclass_content_it_shows_masterclass_content_form(test_app, new_masterclass_content_data_category, endpoint, data, expected_template):
     with captured_templates(test_app) as templates:
         response = test_app.test_client().post(endpoint, data = data)
     assert response.status_code == 200
     assert len(templates) == 1
     template, context = templates[0]
     assert template.name == expected_template
-   
