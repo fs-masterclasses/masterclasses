@@ -82,3 +82,14 @@ def choose_new_or_existing_content():
         else: # I want to say if choice is anything else...
             return redirect(url_for('main_bp.index'))
     return render_template('create-masterclass/content/new-or-existing.html')
+
+@login_required
+@main_bp.route('/choose-content/create-new', methods=['GET', 'POST'])
+def create_new_content():
+    if request.method == 'POST':
+            new_masterclass_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
+            db.session.add(new_masterclass_content) 
+            db.session.commit()
+            return redirect(url_for('main_bp.index')) # will take them back to main create masterclass page
+    else:
+        return render_template('create-masterclass/content/create-new.html')

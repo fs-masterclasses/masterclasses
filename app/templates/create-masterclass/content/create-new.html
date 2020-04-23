@@ -1,0 +1,79 @@
+{%  extends "base.html" %}
+
+{% block content %}
+<div class="govuk-width-container">
+  <a href="/choose-content/new-or-existing" class="govuk-back-link">Back</a>
+
+  <main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Create new masterclass content</h1>
+        <form action="/choose-content/create-new" method="post" novalidate>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="event-name">
+                    Name
+                </label>
+                <span id="more-detail-hint" class="govuk-hint">
+                    Summarise as best you can what this masterclass will cover
+                </span>
+                <input class="govuk-input" id="masterclass-name" name="masterclass-name" type="text">
+            </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="more-detail">
+                    Description
+                </label>
+                <span id="more-detail-hint" class="govuk-hint">
+                    Describe what someone attending the masterclass would learn from it
+                </span>
+                <textarea class="govuk-textarea" id="masterclass-description" name="masterclass-description" rows="5" aria-describedby="masterclass-description"></textarea>
+            </div>
+            <div class="govuk-radios">
+                <label class="govuk-label" for="sort">
+                  Which DDaT 
+                </label>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family" name="select-job-family" type="radio" value="data">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family">
+                    Data
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-2" name="select-job-family" type="radio" value="it operations">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-2">
+                    IT operations
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-3" name="select-job-family" type="radio" value="product and delivery">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-3">
+                    Product and delivery
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-4" name="select-job-family" type="radio" value="quality assurance testing">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-4">
+                    Quality assurance testing
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-5" name="select-job-family" type="radio" value="technical">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-5">
+                    Technical
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="select-job-family-6" name="select-job-family" type="radio" value="user-centred design">
+                  <label class="govuk-label govuk-radios__label" for="select-job-family-6">
+                    User-centred design
+                  </label>
+                </div>
+              </div>
+            <button class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
