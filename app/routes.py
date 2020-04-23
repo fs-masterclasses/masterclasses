@@ -72,3 +72,13 @@ def choose_content():
         existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_category)
         return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
 
+@login_required
+@main_bp.route('/choose-content/new-or-existing', methods=['GET', 'POST'])
+def choose_new_or_existing_content():
+    choice = request.form['which-masterclass']
+    if request.method == 'POST':    
+        if choice =="new masterclass":
+            return render_template('create-masterclass/content/create-new.html')
+        else: # I want to say if choice is anything else...
+            return redirect(url_for('main_bp.index'))
+    return render_template('create-masterclass/content/new-or-existing.html')
