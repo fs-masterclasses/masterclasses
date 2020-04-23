@@ -101,3 +101,7 @@ def test_user_is_redirected_to_correct_url(test_client, logged_in_user, new_mast
     response = test_client.post(endpoint, data = data)
     assert response.status_code == 302
     assert response.location == f'http://localhost{url_for(expected_route)}'
+
+def test_chosen_job_family_is_added_to_session(test_client, logged_in_user):
+    with test_client.post('/choose-content', data = {'select-job-family': 'Data'}):
+        assert session['job_family'] == 'Data'

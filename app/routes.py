@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import *
 
@@ -68,20 +68,26 @@ def choose_content():
     if request.method == 'GET':
         return render_template('create-masterclass/content/choose-ddat-family.html')
     elif request.method == 'POST':    
-        chosen_category = request.form['select-job-family']
-        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_category)
+        chosen_job_family = request.form['select-job-family']
+        session['job_family'] = chosen_job_family
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
         return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
 
 @login_required
 @main_bp.route('/choose-content/new-or-existing', methods=['GET', 'POST'])
 def choose_new_or_existing_content():
-    choice = request.form['which-masterclass']
-    if request.method == 'POST':    
+    if request.method == 'POST':
+        choice = request.form['which-masterclass']    
         if choice =="new masterclass":
             return render_template('create-masterclass/content/create-new.html')
         else: # I want to say if choice is anything else...
             return redirect(url_for('main_bp.index'))
-    return render_template('create-masterclass/content/new-or-existing.html')
+    elif request.method == 'GET':
+        chosen_job_family = session['job_family']
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
+        return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
+    else:
+        return Response(status_code=405) 
 
 @login_required
 @main_bp.route('/choose-content/create-new', methods=['GET', 'POST'])
