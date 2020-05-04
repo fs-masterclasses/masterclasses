@@ -59,6 +59,7 @@ class Masterclass(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     attendees = db.relationship('MasterclassAttendee', backref='masterclass')
+    draft = db.Column(db.Boolean, default=True)
 
     def remaining_spaces(self):
         return self.max_attendees - len(self.attendees)
