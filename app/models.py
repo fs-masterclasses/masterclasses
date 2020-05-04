@@ -33,6 +33,7 @@ class MasterclassContent(db.Model):
     description = db.Column(db.String(500))
     category = db.Column(db.String(200))
     masterclass_instances = db.relationship('Masterclass', backref='content', lazy='dynamic')
+    draft = db.Column(db.Boolean, default=True)
 
     def __repr__(self):
         return '<MasterclassContent {}>'.format(self.name)
