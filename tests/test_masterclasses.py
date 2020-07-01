@@ -65,6 +65,10 @@ def blank_session(db):
     session_.remove()
     print("Rolled back blank session")
 
+def test_chosen_job_family_is_added_to_session(logged_in_user, blank_session):
+    with logged_in_user.post('/create-masterclass/content/job-family', data = {'select-job-family': 'Data'}):
+        assert session['job_family'] == 'Data'
+
 def test_draft_masterclass_id_is_added_to_session(logged_in_user, blank_session):
     with logged_in_user.post('/create-masterclass'):
         assert session['draft_masterclass_id'] == 1

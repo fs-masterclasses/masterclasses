@@ -74,3 +74,15 @@ def create_masterclass_start():
         return render_template('create-masterclass/content/choose-ddat-family.html')
     return render_template('create-masterclass/start.html')
 
+
+@main_bp.route('/create-masterclass/content/job-family', methods=['GET', 'POST'])
+@login_required
+def choose_job_family():
+    if request.method == 'GET':
+        return render_template('create-masterclass/content/choose-ddat-family.html')
+    elif request.method == 'POST':    
+        chosen_job_family = request.form['select-job-family']
+        session['job_family'] = chosen_job_family
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
+        return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
+
