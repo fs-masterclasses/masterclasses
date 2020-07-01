@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import *
 
@@ -61,3 +61,16 @@ def my_masterclasses():
     user = current_user
     booked_masterclasses = user.booked_masterclasses
     return render_template('my-masterclasses.html')
+
+
+@main_bp.route('/create-masterclass', methods=['GET', 'POST'])
+@login_required
+def create_masterclass_start():
+    if request.method == 'POST':
+        new_masterclass = Masterclass()
+        db.session.add(new_masterclass)
+        db.session.commit()
+        session['draft_masterclass_id'] = new_masterclass.id
+        return render_template('create-masterclass/content/choose-ddat-family.html')
+    return render_template('create-masterclass/start.html')
+
