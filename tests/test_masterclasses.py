@@ -30,13 +30,3 @@ def db(client):
     yield _db
 
     _db.drop_all()
-
-
-def test_login_not_required(client, db):
-    rv = client.get('/')
-    assert rv.status_code == 200
-
-
-def test_login_required(login_required_client):
-    rv = login_required_client.get('/')
-    assert rv.status_code == 302
