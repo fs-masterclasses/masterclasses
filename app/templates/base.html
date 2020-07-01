@@ -17,8 +17,8 @@
                       <span class="govuk-header__logotype-text">
                       Masterclasses 
                       </span>
-            </a>
-            </span>
+                    </a>
+                </span>
             </a>
         </div>
         <div align="right" class="govuk-header__content">
@@ -26,23 +26,30 @@
             <nav>
                 <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
                     <li class="govuk-header__navigation-item">
+                        <a class="govuk-header__link" href="/create-a-masterclass">
+                            Create a masterclass
+                        </a>
+                    </li>
+                    <li class="govuk-header__navigation-item">
                         <a class="govuk-header__link" href="#2">
-                      Upcoming
-                    </a>
+                            Upcoming
+                        </a>
                     </li>
                     <li class="govuk-header__navigation-item">
                         <a class="govuk-header__link" href="#3">
-                      My masterclasses
-                    </a>
+                            My masterclasses
+                        </a>
                     </li>
                     <li class="govuk-header__navigation-item">
                         {% if current_user.is_anonymous %}
                         <a class="govuk-header__link" href="{{ url_for('main_bp.login') }}">
-                      Login
-                    </a> {% else %}
+                            Login
+                        </a> 
+                        {% else %}
                         <a class="govuk-header__link" href="{{ url_for('main_bp.logout') }}">
-                      Logout
-                    </a> {% endif %}
+                            Logout
+                        </a> 
+                        {% endif %}
                     </li>
                 </ul>
             </nav>
