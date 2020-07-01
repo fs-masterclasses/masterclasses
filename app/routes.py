@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint, session
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import *
 
@@ -86,3 +86,22 @@ def choose_job_family():
         existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
         return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
 
+@main_bp.route('/create-masterclass/content/new-or-existing', methods=['GET', 'POST'])
+@login_required
+def choose_new_or_existing_content():
+    if request.method == 'POST':
+        choice = request.form['which-masterclass']
+        if choice =="new masterclass":
+            return render_template('create-masterclass/content/create-new.html')
+        else:
+            draft_masterclass = Masterclass.query.filter_by(id=session['draft_masterclass_id']).first()
+            draft_masterclass.masterclass_content_id = int(choice)
+            db.session.add(draft_masterclass)
+            db.session.commit()
+            return redirect(url_for('main_bp.index'))
+    elif request.method == 'GET':
+        chosen_job_family = session['job_family']
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
+        return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
+    else:
+        return Response(status_code=405) 

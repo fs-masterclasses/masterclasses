@@ -4,6 +4,7 @@ from flask import session
 from app import create_app
 from app import db as _db
 from config import *
+from app.models import MasterclassContent
 
 @pytest.fixture(scope="session")
 def test_app():
@@ -65,6 +66,13 @@ def blank_session(db):
     session_.remove()
     print("Rolled back blank session")
 
+@pytest.fixture
+def new_masterclass_content_data_category(db, blank_session):
+    mc = MasterclassContent(name='Introduction to R', description='This masterclass will give you a solid understanding of how to run queries using R.', category='Data')
+    db.session.add(mc)
+    db.session.commit()
+    yield 
+
 def test_chosen_job_family_is_added_to_session(logged_in_user, blank_session):
     with logged_in_user.post('/create-masterclass/content/job-family', data = {'select-job-family': 'Data'}):
         assert session['job_family'] == 'Data'
@@ -72,3 +80,11 @@ def test_chosen_job_family_is_added_to_session(logged_in_user, blank_session):
 def test_draft_masterclass_id_is_added_to_session(logged_in_user, blank_session):
     with logged_in_user.post('/create-masterclass'):
         assert session['draft_masterclass_id'] == 1
+
+def test_add_existing_content_to_draft_masterclass(logged_in_user, db, new_masterclass_content_data_category, new_masterclass, blank_session):
+    with logged_in_user.session_transaction() as session:    
+        session['draft_masterclass_id'] = 1
+    masterclass_content = MasterclassContent.query.filter_by(name='Introduction to R').first()
+    logged_in_user.post('/create-masterclass/content/new-or-existing', data = {'which-masterclass': masterclass_content.id})
+    draft_masterclass = Masterclass.query.get(1)
+    assert draft_masterclass.masterclass_content_id == masterclass_content.id
