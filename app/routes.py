@@ -105,3 +105,18 @@ def choose_new_or_existing_content():
         return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
     else:
         return Response(status_code=405) 
+
+@main_bp.route('/create-masterclass/content/create-new', methods=['GET', 'POST'])
+@login_required
+def create_new_content():
+    if request.method == 'POST':
+            new_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
+            db.session.add(new_content) 
+            db.session.commit()
+            draft_masterclass = Masterclass.query.filter_by(id=session['draft_masterclass_id']).first() 
+            draft_masterclass.masterclass_content_id = new_content.id
+            db.session.add(draft_masterclass)
+            db.session.commit()
+            return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
+    else:
+        return render_template('create-masterclass/content/create-new.html')

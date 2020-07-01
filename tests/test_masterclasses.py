@@ -4,7 +4,7 @@ from flask import session
 from app import create_app
 from app import db as _db
 from config import *
-from app.models import MasterclassContent
+from app.models import MasterclassContent, Masterclass
 
 @pytest.fixture(scope="session")
 def test_app():
@@ -73,6 +73,13 @@ def new_masterclass_content_data_category(db, blank_session):
     db.session.commit()
     yield 
 
+@pytest.fixture()
+def new_masterclass(db, blank_session):
+    m = Masterclass(id=1)
+    db.session.add(m)
+    db.session.commit()
+    yield
+
 def test_chosen_job_family_is_added_to_session(logged_in_user, blank_session):
     with logged_in_user.post('/create-masterclass/content/job-family', data = {'select-job-family': 'Data'}):
         assert session['job_family'] == 'Data'
@@ -88,3 +95,11 @@ def test_add_existing_content_to_draft_masterclass(logged_in_user, db, new_maste
     logged_in_user.post('/create-masterclass/content/new-or-existing', data = {'which-masterclass': masterclass_content.id})
     draft_masterclass = Masterclass.query.get(1)
     assert draft_masterclass.masterclass_content_id == masterclass_content.id
+
+def test_add_new_content_to_draft_masterclass(logged_in_user, new_masterclass, blank_session):
+    with logged_in_user.session_transaction() as session:    
+        session['draft_masterclass_id'] = 1
+    logged_in_user.post('/create-masterclass/content/create-new', data = {'masterclass-name': 'Test name', 'masterclass-description': 'A description'})
+    draft_masterclass = Masterclass.query.get(1)
+    new_content = MasterclassContent.query.filter_by(name='Test name').first()
+    assert draft_masterclass.masterclass_content_id == new_content.id
