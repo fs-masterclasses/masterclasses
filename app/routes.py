@@ -113,7 +113,7 @@ def create_new_content():
             new_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
             db.session.add(new_content) 
             db.session.commit()
-            draft_masterclass = Masterclass.query.filter_by(id=session['draft_masterclass_id']).first() 
+            draft_masterclass = Masterclass.query.get(session['draft_masterclass_id'])
             draft_masterclass.masterclass_content_id = new_content.id
             db.session.add(draft_masterclass)
             db.session.commit()
