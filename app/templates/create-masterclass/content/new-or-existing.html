@@ -1,0 +1,51 @@
+{%  extends "base.html" %}
+
+{% block content %}
+<div class="govuk-width-container">
+  <a href="/create-masterclass/content/job-family" class="govuk-back-link">Back</a>
+
+  <main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <form action="/create-masterclass/content/new-or-existing" method="post" novalidate>
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                  Which masterclass do you want to run?
+                </h1>
+              </legend>
+              <span id="choose-masterclass-hint" class="govuk-hint">
+                Choose an existing masterclass to run or create a new one.
+              </span>
+              <div class="govuk-radios">
+                {% for masterclass in existing_masterclasses %}
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="existing-masterclass" name="which-masterclass" type="radio" value={{masterclass.id}}>
+                        <label class="govuk-label govuk-radios__label" for="select-job-family">
+                            {{masterclass.name}}
+                        </label>
+                        <span class="govuk-hint govuk-radios__hint">
+                            {{masterclass.description}}
+                        </span>
+                    </div>
+                 {% endfor %}
+                 <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="new_masterclass_option" name="which-masterclass" type="radio" value="new masterclass">
+                        <label class="govuk-label govuk-radios__label" for="select-job-family">
+                            I want to run a new masterclass
+                        </label>
+                  </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <button class="govuk-button" data-module="govuk-button">
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

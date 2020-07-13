@@ -1,0 +1,40 @@
+{%  extends "base.html" %}
+
+{% block content %}
+<div class="govuk-width-container">
+  <div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{{ url_for('main_bp.index') }}">Home</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item" aria-current="page">Create a masterclass</li>
+    </ol>
+  </div>
+
+  <main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Create a masterclass</h1>
+        <p class="govuk-body">A masterclass is a workshop which helps to build digital, data and technology skills in civil servants. Any civil servant can run a masterclass.</p>
+        <p class="govuk-body">To create a new masterclass you will need to provide:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>a name and description</li>
+          <li>a time and date</li>
+          <li>a location</li>
+          <li>the number of available spaces</li>
+        </ul>
+
+        <p class="govuk-body">Creating a new masterclass takes around 5 minutes.</p>
+
+        <form class="govuk-form-group" action="/create-masterclass" method="post">
+          <div class="input submit">
+            <input type="submit" value="Start now" class="govuk-button">
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

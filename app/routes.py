@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import *
 
@@ -9,7 +9,7 @@ main_bp = Blueprint("main_bp", __name__)
 @main_bp.route('/index', methods=['GET'])
 @login_required
 def index():
-    masterclasses = Masterclass.query.order_by(Masterclass.timestamp.asc()).all()
+    masterclasses = Masterclass.query.filter_by(draft=None).order_by(Masterclass.timestamp.asc()).all()
     return render_template('index.html', title='Home', user=User, masterclasses=masterclasses)
 
 
@@ -61,3 +61,62 @@ def my_masterclasses():
     user = current_user
     booked_masterclasses = user.booked_masterclasses
     return render_template('my-masterclasses.html')
+
+
+@main_bp.route('/create-masterclass', methods=['GET', 'POST'])
+@login_required
+def create_masterclass_start():
+    if request.method == 'POST':
+        new_masterclass = Masterclass()
+        db.session.add(new_masterclass)
+        db.session.commit()
+        session['draft_masterclass_id'] = new_masterclass.id
+        return render_template('create-masterclass/content/choose-ddat-family.html')
+    return render_template('create-masterclass/start.html')
+
+
+@main_bp.route('/create-masterclass/content/job-family', methods=['GET', 'POST'])
+@login_required
+def choose_job_family():
+    if request.method == 'GET':
+        return render_template('create-masterclass/content/choose-ddat-family.html')
+    elif request.method == 'POST':    
+        chosen_job_family = request.form['select-job-family']
+        session['job_family'] = chosen_job_family
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
+        return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
+
+@main_bp.route('/create-masterclass/content/new-or-existing', methods=['GET', 'POST'])
+@login_required
+def choose_new_or_existing_content():
+    if request.method == 'POST':
+        choice = request.form['which-masterclass']
+        if choice =="new masterclass":
+            return render_template('create-masterclass/content/create-new.html')
+        else:
+            draft_masterclass = Masterclass.query.filter_by(id=session['draft_masterclass_id']).first()
+            draft_masterclass.masterclass_content_id = int(choice)
+            db.session.add(draft_masterclass)
+            db.session.commit()
+            return redirect(url_for('main_bp.index'))
+    elif request.method == 'GET':
+        chosen_job_family = session['job_family']
+        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
+        return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
+    else:
+        return Response(status_code=405) 
+
+@main_bp.route('/create-masterclass/content/create-new', methods=['GET', 'POST'])
+@login_required
+def create_new_content():
+    if request.method == 'POST':
+            new_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
+            db.session.add(new_content) 
+            db.session.commit()
+            draft_masterclass = Masterclass.query.get(session['draft_masterclass_id'])
+            draft_masterclass.masterclass_content_id = new_content.id
+            db.session.add(draft_masterclass)
+            db.session.commit()
+            return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
+    else:
+        return render_template('create-masterclass/content/create-new.html')
