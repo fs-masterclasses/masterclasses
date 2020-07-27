@@ -86,7 +86,6 @@ def captured_templates(app):
     recorded = []
     def record(sender, template, context, **extra):
         recorded.append((template, context))
-        print('hereeeeee', context)
     template_rendered.connect(record, app)
     try:
         yield recorded
