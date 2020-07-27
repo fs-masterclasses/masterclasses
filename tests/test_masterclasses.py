@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from app import create_app
 from app import db as _db
 from config import *
-from app.models import MasterclassContent, Masterclass
+from app.models import MasterclassContent, Masterclass, User
 
 @pytest.fixture(scope="session")
 def test_app():
@@ -48,6 +48,13 @@ def db(test_client):
 
     _db.drop_all()
 
+@pytest.fixture
+def test_user(db, blank_session):
+    u = User(email='test@example.com')
+    u.set_password('password')
+    db.session.add(u)
+    db.session.commit()
+    yield
 
 @pytest.fixture(scope="function", autouse=False)
 def blank_session(db):
@@ -80,6 +87,15 @@ def new_masterclass(db, blank_session):
     db.session.add(m)
     db.session.commit()
     yield
+
+
+def test_logging_in(test_client, db, test_user):
+    response = test_client.post(
+            url_for("main_bp.login"), data={"email-address": "test@example.com", "password": "password"}
+        )
+    assert response.status_code == 302
+    assert response.location == f'http://localhost{url_for("main_bp.index")}'
+
 
 @contextmanager
 def captured_templates(app):
