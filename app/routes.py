@@ -16,12 +16,12 @@ def index():
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main_bp.index'))
     if request.method == 'POST':
         user = User.query.filter_by(email=request.form['email-address']).first()
         if user is None or not user.check_password(request.form['password']):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('main_bp.login'))
         login_user(user,
                 # remember=request.form.remember_me.data
                    )
@@ -32,7 +32,7 @@ def login():
 @main_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main_bp.index'))
 
 
 @main_bp.route('/masterclass/<masterclass_id>', methods=['GET', 'POST'])
