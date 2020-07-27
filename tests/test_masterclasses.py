@@ -97,6 +97,24 @@ def test_logging_in(test_client, db, test_user):
     assert response.location == f'http://localhost{url_for("main_bp.index")}'
 
 
+@pytest.mark.parametrize(
+    'route',
+    (
+        ('/'),
+        ('/masterclass/1'),
+        ('/signup-confirmation'),
+        ('/create-masterclass'),
+        ('/create-masterclass/content/job-family'),
+        ('/create-masterclass/content/new-or-existing'),
+        ('/create-masterclass/content/create-new')
+    )
+)
+def test_cannot_access_routes_when_not_logged_in(test_client, db, new_masterclass, route):
+    response = test_client.get(route)
+    assert response.status_code == 302
+    assert url_for("main_bp.login") in response.location
+
+
 def test_access_homepage_logged_in(logged_in_user, db):
     response = logged_in_user.get('/')
     assert response.status_code == 200
