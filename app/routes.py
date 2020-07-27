@@ -35,8 +35,8 @@ def logout():
     return redirect(url_for('index'))
 
 
-@login_required
 @main_bp.route('/masterclass/<masterclass_id>', methods=['GET', 'POST'])
+@login_required
 def masterclass_profile(masterclass_id):
     masterclass = Masterclass.query.get(masterclass_id)
     already_attendee = MasterclassAttendee.is_attendee(current_user.id, masterclass_id)
@@ -48,15 +48,15 @@ def masterclass_profile(masterclass_id):
     return render_template('masterclass-profile.html', masterclass_data=masterclass, already_attendee=already_attendee)
 
 
-@login_required
 @main_bp.route('/signup-confirmation', methods=['GET'])
+@login_required
 def signup_confirmation():
     masterclass = Masterclass.query.get(request.args["masterclass_id"])
     return render_template('signup-confirmation.html', masterclass=masterclass)
 
 
-@login_required
 @main_bp.route('/my_masterclasses', methods=['GET'])
+@login_required
 def my_masterclasses():
     user = current_user
     booked_masterclasses = user.booked_masterclasses
@@ -86,6 +86,7 @@ def choose_job_family():
         existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
         return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
 
+
 @main_bp.route('/create-masterclass/content/new-or-existing', methods=['GET', 'POST'])
 @login_required
 def choose_new_or_existing_content():
@@ -105,6 +106,7 @@ def choose_new_or_existing_content():
         return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
     else:
         return Response(status_code=405) 
+
 
 @main_bp.route('/create-masterclass/content/create-new', methods=['GET', 'POST'])
 @login_required
