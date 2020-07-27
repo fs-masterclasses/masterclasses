@@ -97,6 +97,11 @@ def test_logging_in(test_client, db, test_user):
     assert response.location == f'http://localhost{url_for("main_bp.index")}'
 
 
+def test_access_homepage_logged_in(logged_in_user, db):
+    response = logged_in_user.get('/')
+    assert response.status_code == 200
+
+
 @contextmanager
 def captured_templates(app):
     recorded = []
