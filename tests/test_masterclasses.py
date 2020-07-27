@@ -28,10 +28,10 @@ def test_client(test_app):
     ctx.pop()
 
 @pytest.fixture
-def logged_in_user(test_client):
+def logged_in_user(test_client, db, test_user):
     with test_client:
         test_client.post(
-            "main_bp.login", data={"email-address": "test@user.com", "password": "Password"}
+            url_for("main_bp.login"), data={"email-address": "test@user.com", "password": "password"}
         )
         yield test_client
         test_client.get("main_bp.logout")
