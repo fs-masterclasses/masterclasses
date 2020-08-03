@@ -12,9 +12,4 @@ class Config(object):
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    LOGIN_DISABLED = True
-
-class TestLoginConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
     LOGIN_DISABLED = False

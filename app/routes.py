@@ -16,12 +16,12 @@ def index():
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main_bp.index'))
     if request.method == 'POST':
         user = User.query.filter_by(email=request.form['email-address']).first()
         if user is None or not user.check_password(request.form['password']):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('main_bp.login'))
         login_user(user,
                 # remember=request.form.remember_me.data
                    )
@@ -32,11 +32,11 @@ def login():
 @main_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main_bp.index'))
 
 
-@login_required
 @main_bp.route('/masterclass/<masterclass_id>', methods=['GET', 'POST'])
+@login_required
 def masterclass_profile(masterclass_id):
     masterclass = Masterclass.query.get(masterclass_id)
     already_attendee = MasterclassAttendee.is_attendee(current_user.id, masterclass_id)
@@ -48,15 +48,15 @@ def masterclass_profile(masterclass_id):
     return render_template('masterclass-profile.html', masterclass_data=masterclass, already_attendee=already_attendee)
 
 
-@login_required
 @main_bp.route('/signup-confirmation', methods=['GET'])
+@login_required
 def signup_confirmation():
     masterclass = Masterclass.query.get(request.args["masterclass_id"])
     return render_template('signup-confirmation.html', masterclass=masterclass)
 
 
-@login_required
 @main_bp.route('/my_masterclasses', methods=['GET'])
+@login_required
 def my_masterclasses():
     user = current_user
     booked_masterclasses = user.booked_masterclasses
@@ -86,6 +86,7 @@ def choose_job_family():
         existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
         return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
 
+
 @main_bp.route('/create-masterclass/content/new-or-existing', methods=['GET', 'POST'])
 @login_required
 def choose_new_or_existing_content():
@@ -105,6 +106,7 @@ def choose_new_or_existing_content():
         return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
     else:
         return Response(status_code=405) 
+
 
 @main_bp.route('/create-masterclass/content/create-new', methods=['GET', 'POST'])
 @login_required

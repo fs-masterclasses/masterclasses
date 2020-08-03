@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from app import create_app
 from app import db as _db
 from config import *
-from app.models import MasterclassContent, Masterclass
+from app.models import MasterclassContent, Masterclass, User
 
 @pytest.fixture(scope="session")
 def test_app():
@@ -28,10 +28,10 @@ def test_client(test_app):
     ctx.pop()
 
 @pytest.fixture
-def logged_in_user(test_client):
+def logged_in_user(test_client, db, test_user):
     with test_client:
         test_client.post(
-            "main_bp.login", data={"email-address": "test@user.com", "password": "Password"}
+            url_for("main_bp.login"), data={"email-address": "test@user.com", "password": "password"}
         )
         yield test_client
         test_client.get("main_bp.logout")
@@ -48,6 +48,13 @@ def db(test_client):
 
     _db.drop_all()
 
+@pytest.fixture
+def test_user(db, blank_session):
+    u = User(email='test@example.com')
+    u.set_password('password')
+    db.session.add(u)
+    db.session.commit()
+    yield
 
 @pytest.fixture(scope="function", autouse=False)
 def blank_session(db):
@@ -81,12 +88,43 @@ def new_masterclass(db, blank_session):
     db.session.commit()
     yield
 
+
+def test_logging_in(test_client, db, test_user):
+    response = test_client.post(
+            url_for("main_bp.login"), data={"email-address": "test@example.com", "password": "password"}
+        )
+    assert response.status_code == 302
+    assert response.location == f'http://localhost{url_for("main_bp.index")}'
+
+
+@pytest.mark.parametrize(
+    'route',
+    (
+        ('/'),
+        ('/masterclass/1'),
+        ('/signup-confirmation'),
+        ('/create-masterclass'),
+        ('/create-masterclass/content/job-family'),
+        ('/create-masterclass/content/new-or-existing'),
+        ('/create-masterclass/content/create-new')
+    )
+)
+def test_cannot_access_routes_when_not_logged_in(test_client, db, new_masterclass, route):
+    response = test_client.get(route)
+    assert response.status_code == 302
+    assert url_for("main_bp.login") in response.location
+
+
+def test_access_homepage_logged_in(logged_in_user, db):
+    response = logged_in_user.get('/')
+    assert response.status_code == 200
+
+
 @contextmanager
 def captured_templates(app):
     recorded = []
     def record(sender, template, context, **extra):
         recorded.append((template, context))
-        print('hereeeeee', context)
     template_rendered.connect(record, app)
     try:
         yield recorded
