@@ -45,6 +45,9 @@ class Location(db.Model):
     street_name = db.Column(db.String(100), index=True)
     town_or_city = db.Column(db.String(50), index=True)
     postcode = db.Column(db.String(8), index=True)  # A postcode in the UK can't have more than 8 characters inc. space
+    name = db.Column(db.String, index=True)
+    address = db.Column(db.String, index=True)
+    maps_id = db.Column(db.String, index=True)
     masterclasses = db.relationship('Masterclass', backref='location', lazy='dynamic')
 
     def __repr__(self):
@@ -55,6 +58,9 @@ class Masterclass(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True)
     max_attendees = db.Column(db.Integer)
+    is_remote = db.Column(db.Boolean, index=True)
+    remote_url = db.Column(db.String, index=True)
+    remote_joining_instructions = db.Column(db.String, index=True)
     masterclass_content_id = db.Column(db.Integer, db.ForeignKey('masterclass_content.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
