@@ -44,7 +44,7 @@ def masterclass_profile(masterclass_id):
             new_attendee = MasterclassAttendee(attendee_id = current_user.id, masterclass_id = masterclass_id) 
             db.session.add(new_attendee) 
             db.session.commit()
-            return redirect(url_for('signup_confirmation', masterclass_id=masterclass_id))
+            return redirect(url_for('main_bp.signup_confirmation', masterclass_id=masterclass_id))
     return render_template('masterclass-profile.html', masterclass_data=masterclass, already_attendee=already_attendee)
 
 
