@@ -28,8 +28,12 @@
                     <h2 class="govuk-heading-m">When</h2>
                     <p class="govuk-body">{{ masterclass_data.timestamp.strftime("%X") }} <br> {{ masterclass_data.timestamp.strftime("%A") }} {{ masterclass_data.timestamp.day }} {{ masterclass_data.timestamp.strftime("%B") }} {{ masterclass_data.timestamp.year }}</p>
                     <h2 class="govuk-heading-m">Location</h2>
-                    <p class="govuk-body">{{ masterclass_data.location.building }}</p>
-                    <p class="govuk-body">{{ masterclass_data.location.street_number }} {{ masterclass_data.location.street_name }}, {{ masterclass_data.location.town_or_city }}, {{ masterclass_data.location.postcode }}</p>
+                    {% if masterclass_data.is_remote %}
+                        <p class="govuk-body">Remote</p>
+                    {% else %}
+                        <p class="govuk-body">{{ masterclass_data.location.name }}</p>
+                        <p class="govuk-body">{{ masterclass_data.location.address }}</p>
+                    {% endif %}
                     <h2 class="govuk-heading-m">Instructor</h2>
                     <p class="govuk-body">{{ masterclass_data.instructor.first_name }} {{ masterclass_data.instructor.last_name }}</p>
                     <h2 class="govuk-heading-m">Remaining places</h2>
