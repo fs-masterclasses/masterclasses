@@ -9,7 +9,7 @@ main_bp = Blueprint("main_bp", __name__)
 @main_bp.route('/index', methods=['GET'])
 @login_required
 def index():
-    masterclasses = Masterclass.query.filter_by(draft=None).order_by(Masterclass.timestamp.asc()).all()
+    masterclasses = Masterclass.query.filter_by(draft=False).order_by(Masterclass.timestamp.asc()).all()
     return render_template('index.html', title='Home', user=User, masterclasses=masterclasses)
 
 
