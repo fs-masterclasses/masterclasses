@@ -30,10 +30,17 @@
                     <h2 class="govuk-heading-m">Location</h2>
                     {% if masterclass_data.is_remote %}
                         <p class="govuk-body">Remote</p>
+                        {% if already_attendee %}
+                            <h2 class="govuk-heading-m">Joining link</h2>
+                                <p class="govuk-body"><a href={{ masterclass_data.remote_url }}>{{ masterclass_data.remote_url }}</a></p>
+                            <h2 class="govuk-heading-m">Joining instructions</h2>
+                                <p class="govuk-body">{{ masterclass_data.remote_joining_instructions }}</p>
+                        {% endif %}
                     {% else %}
                         <p class="govuk-body">{{ masterclass_data.location.name }}</p>
                         <p class="govuk-body">{{ masterclass_data.location.address }}</p>
                     {% endif %}
+                <tr>
                     <h2 class="govuk-heading-m">Instructor</h2>
                     <p class="govuk-body">{{ masterclass_data.instructor.first_name }} {{ masterclass_data.instructor.last_name }}</p>
                     <h2 class="govuk-heading-m">Remaining places</h2>
