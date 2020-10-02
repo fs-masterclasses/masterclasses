@@ -3,40 +3,43 @@
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
         <h1 class="govuk-heading-l">My masterclasses</h1>
+        {% if booked_masterclasses|length > 0 %}
+            {% for masterclass in booked_masterclasses %}
 
-        {% for masterclass in booked_masterclasses %}
+            <div class="app-content-panel">
+                <h2 class="govuk-heading-m"><a class="govuk-link--no-visited-state" href="{{ url_for('main_bp.masterclass_profile', masterclass_id=masterclass.id) }}">{{ masterclass.content.name }}</a></h2>
+                <table>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-caption-m govuk-!-padding-right-6">Location</td>
+                            <td class="govuk-body">
+                            {% if masterclass.is_remote %}
+                                Remote
+                            {% else %}
+                                {{ masterclass.location.name }}, {{ masterclass.location.address }}
+                            {% endif %}
+                            </td>
+                    </tr>
+                    <tr>
+                        <td class="govuk-caption-m govuk-!-padding-right-6">Date</td>
+                        <td class="govuk-body">{{ masterclass.timestamp.strftime("%A") }} {{ masterclass.timestamp.day }} {{ masterclass.timestamp.strftime("%B") }} {{ masterclass.timestamp.year }}</td>
+                    </tr>
+                    <tr>
+                        <td class="govuk-caption-m govuk-!-padding-right-6">Time</td>
+                        <td class="govuk-body">{{ masterclass.timestamp.strftime("%X") }}</td>
+                    </tr>
+                    <tr>
+                        <td class="govuk-caption-m govuk-!-padding-right-6">Instructor</td>
+                        <td class="govuk-body">{{ masterclass.instructor.first_name }} {{ masterclass.instructor.last_name }}</td>
+                    </tr>
+                </table>
+            </div>
+            <hr>
 
-        <div class="app-content-panel">
-            <h2 class="govuk-heading-m"><a class="govuk-link--no-visited-state" href="{{ url_for('masterclass_profile', masterclass_id=masterclass.id) }}">{{ masterclass.content.name }}</a></h2>
-            <table>
-                <tr class="govuk-table__row">
-                    <td class="govuk-caption-m govuk-!-padding-right-6">Location</td>
-                        <td class="govuk-body">
-                        {% if masterclass.is_remote %}
-                            Remote
-                        {% else %}
-                             {{ masterclass.location.name }}, {{ masterclass.location.address }}
-                        {% endif %}
-                        </td>
-                </tr>
-                <tr>
-                    <td class="govuk-caption-m govuk-!-padding-right-6">Date</td>
-                    <td class="govuk-body">{{ masterclass.timestamp.strftime("%A") }} {{ masterclass.timestamp.day }} {{ masterclass.timestamp.strftime("%B") }} {{ masterclass.timestamp.year }}</td>
-                </tr>
-                <tr>
-                    <td class="govuk-caption-m govuk-!-padding-right-6">Time</td>
-                    <td class="govuk-body">{{ masterclass.timestamp.strftime("%X") }}</td>
-                </tr>
-                <tr>
-                    <td class="govuk-caption-m govuk-!-padding-right-6">Instructor</td>
-                    <td class="govuk-body">{{ masterclass.instructor.first_name }} {{ masterclass.instructor.last_name }}</td>
-                </tr>
-            </table>
-        </div>
-        <hr>
-
-        {% endfor %}
-
+            {% endfor %}
+        {% else %}
+            <p class="govuk-body">You haven't booked any masterclasses.</p>
+            <p class="govuk-body">You can find upcoming masterclasses <a class="govuk-link--no-visited-state" href="/">on the homepage</a>.</p>
+        {% endif %}
     </main>
 </div>
 
