@@ -62,7 +62,7 @@ def signup_confirmation():
     return render_template('signup-confirmation.html', masterclass=masterclass)
 
 
-@main_bp.route('/my_masterclasses', methods=['GET'])
+@main_bp.route('/my-masterclasses', methods=['GET'])
 @login_required
 def my_masterclasses():
     user = current_user
