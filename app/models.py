@@ -1,6 +1,8 @@
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from typing import List, Union
+from sqlalchemy import or_
 
 
 class User(UserMixin, db.Model):   # User inherits from db.Model, a base class for all models from Flask-sqlalchemy
@@ -23,9 +25,16 @@ class User(UserMixin, db.Model):   # User inherits from db.Model, a base class f
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get_booked_masterclasses(self) -> List[Union['Masterclass', None]]:
+        """
+        Returns a list of masterclass objects which the user is an attendee of.
+        """
+        return [bm.masterclass for bm in self.booked_masterclasses]
+
     @login.user_loader
     def load_user(id):
         return User.query.get(int(id))
+
 
 class MasterclassContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -52,6 +61,11 @@ class Location(db.Model):
 
     def __repr__(self):
         return '<Location {}>'.format(self.name)
+
+    @classmethod
+    def return_existing_location_or_none(cls, query: str) -> Union[None, 'Location']:
+        query = f'%{query}%'
+        return Location.query.filter(or_(Location.name.ilike(query), Location.address.ilike(query))).all()
 
 
 class Masterclass(db.Model):

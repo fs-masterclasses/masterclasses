@@ -66,8 +66,8 @@ def signup_confirmation():
 @login_required
 def my_masterclasses():
     user = current_user
-    booked_masterclasses = user.booked_masterclasses
-    return render_template('my-masterclasses.html')
+    booked_masterclasses = user.get_booked_masterclasses()
+    return render_template('my-masterclasses.html', booked_masterclasses=booked_masterclasses)
 
 
 @main_bp.route('/create-masterclass', methods=['GET', 'POST'])
