@@ -1,12 +1,12 @@
 {% extends "base.html" %} {% block content %}
 
-{% set spaces_remaining = masterclass_data.remaining_spaces() %}
+{% set spaces_remaining = masterclass.remaining_spaces() %}
 
 
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">{{ masterclass_data.content.name }}</h1>
+            <h1 class="govuk-heading-l">{{ masterclass.content.name }}</h1>
             {% if already_attendee %}
                 <div class="govuk-panel govuk-panel--confirmation">
                     <h1 class="govuk-panel__title">
@@ -21,28 +21,28 @@
                     </h1>
                 </div>
                 {% endif %}
-            <form class='govuk-form-group' action='/masterclass/{{ masterclass_data.id }}' method="post">   
+            <form class='govuk-form-group' action='/masterclass/{{ masterclass.id }}' method="post">   
                 <div>
                     <h2 class="govuk-heading-m">Description</h2>
-                    <p class="govuk-body">{{ masterclass_data.content.description }}</p>
+                    <p class="govuk-body">{{ masterclass.content.description }}</p>
                     <h2 class="govuk-heading-m">When</h2>
-                    <p class="govuk-body">{{ masterclass_data.timestamp.strftime("%X") }} <br> {{ masterclass_data.timestamp.strftime("%A") }} {{ masterclass_data.timestamp.day }} {{ masterclass_data.timestamp.strftime("%B") }} {{ masterclass_data.timestamp.year }}</p>
+                    <p class="govuk-body">{{ masterclass.timestamp.strftime("%X") }} <br> {{ masterclass.timestamp.strftime("%A") }} {{ masterclass.timestamp.day }} {{ masterclass.timestamp.strftime("%B") }} {{ masterclass.timestamp.year }}</p>
                     <h2 class="govuk-heading-m">Location</h2>
-                    {% if masterclass_data.is_remote %}
+                    {% if masterclass.is_remote %}
                         <p class="govuk-body">Remote</p>
                         {% if already_attendee %}
                             <h2 class="govuk-heading-m">Joining link</h2>
-                                <p class="govuk-body"><a href={{ masterclass_data.remote_url }}>{{ masterclass_data.remote_url }}</a></p>
+                                <p class="govuk-body"><a href={{ masterclass.remote_url }}>{{ masterclass.remote_url }}</a></p>
                             <h2 class="govuk-heading-m">Joining instructions</h2>
-                                <p class="govuk-body">{{ masterclass_data.remote_joining_instructions }}</p>
+                                <p class="govuk-body">{{ masterclass.remote_joining_instructions }}</p>
                         {% endif %}
                     {% else %}
-                        <p class="govuk-body">{{ masterclass_data.location.name }}</p>
-                        <p class="govuk-body">{{ masterclass_data.location.address }}</p>
+                        <p class="govuk-body">{{ masterclass.location.name }}</p>
+                        <p class="govuk-body">{{ masterclass.location.address }}</p>
                     {% endif %}
                 <tr>
                     <h2 class="govuk-heading-m">Instructor</h2>
-                    <p class="govuk-body">{{ masterclass_data.instructor.first_name }} {{ masterclass_data.instructor.last_name }}</p>
+                    <p class="govuk-body">{{ masterclass.instructor.first_name }} {{ masterclass.instructor.last_name }}</p>
                     <h2 class="govuk-heading-m">Remaining places</h2>
                     <p class="govuk-body">{{ spaces_remaining }}</p>
                 </div>
