@@ -1,6 +1,13 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, session, Response
 from flask_login import current_user, login_user, login_required, logout_user
-from app.models import *
+
+from app.models import (
+    Masterclass,
+    MasterclassAttendee,
+    MasterclassContent,
+    User,
+    db,
+)
 
 main_bp = Blueprint("main_bp", __name__)
 
