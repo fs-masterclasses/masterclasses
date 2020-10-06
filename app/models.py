@@ -51,7 +51,7 @@ class Location(db.Model):
     masterclasses = db.relationship('Masterclass', backref='location', lazy='dynamic')
 
     def __repr__(self):
-        return '<Location {}>'.format(self.building)
+        return '<Location {}>'.format(self.name)
 
 
 class Masterclass(db.Model):

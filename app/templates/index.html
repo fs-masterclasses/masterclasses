@@ -12,7 +12,13 @@
             <table>
                 <tr class="govuk-table__row">
                     <td class="govuk-caption-m govuk-!-padding-right-6">Location</td>
-                    <td class="govuk-body">{{ masterclass.location.building }}, {{ masterclass.location.town_or_city }}, {{masterclass.location.postcode }}</td>
+                        <td class="govuk-body">
+                        {% if masterclass.is_remote %}
+                            Remote
+                        {% else %}
+                            {{ masterclass.location.name }}, {{ masterclass.location.address }}
+                        {% endif %}
+                        </td>                    
                 </tr>
                 <tr>
                     <td class="govuk-caption-m govuk-!-padding-right-6">Date</td>

@@ -9,7 +9,7 @@ main_bp = Blueprint("main_bp", __name__)
 @main_bp.route('/index', methods=['GET'])
 @login_required
 def index():
-    masterclasses = Masterclass.query.filter_by(draft=None).order_by(Masterclass.timestamp.asc()).all()
+    masterclasses = Masterclass.query.filter_by(draft=False).order_by(Masterclass.timestamp.asc()).all()
     return render_template('index.html', title='Home', user=User, masterclasses=masterclasses)
 
 
@@ -44,8 +44,8 @@ def masterclass_profile(masterclass_id):
             new_attendee = MasterclassAttendee(attendee_id = current_user.id, masterclass_id = masterclass_id) 
             db.session.add(new_attendee) 
             db.session.commit()
-            return redirect(url_for('signup_confirmation', masterclass_id=masterclass_id))
-    return render_template('masterclass-profile.html', masterclass_data=masterclass, already_attendee=already_attendee)
+            return redirect(url_for('main_bp.signup_confirmation', masterclass_id=masterclass_id))
+    return render_template('masterclass-profile.html', masterclass=masterclass, already_attendee=already_attendee)
 
 
 @main_bp.route('/signup-confirmation', methods=['GET'])
