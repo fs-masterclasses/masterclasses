@@ -146,3 +146,12 @@ def test_remote_joining_info_visible_in_masterclass_profile_if_user_is_attendee(
     logged_in_user.post('/masterclass/2')
     response = logged_in_user.get('/masterclass/2')
     assert '<h2 class="govuk-heading-m">Joining link</h2>' in response.get_data(as_text=True)
+
+def test_display_my_masterclasses_with_none_booked(logged_in_user, blank_session):
+    response = logged_in_user.get('/my-masterclasses')
+    assert '<p class="govuk-body">You haven\'t booked any masterclasses.</p>' in response.get_data(as_text=True)
+
+def test_display_my_masterclasses(logged_in_user, test_masterclass_with_details, test_content_data_category, blank_session):
+    logged_in_user.post(f'/masterclass/{test_masterclass_with_details.id}')
+    response = logged_in_user.get('/my-masterclasses')
+    assert f'<a class="govuk-link--no-visited-state" href="/masterclass/1">{test_masterclass_with_details.content.name}</a>' in response.get_data(as_text=True)
