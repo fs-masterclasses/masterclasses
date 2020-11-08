@@ -1,6 +1,13 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, session, Response
 from flask_login import current_user, login_user, login_required, logout_user
-from app.models import *
+
+from app.models import (
+    Masterclass,
+    MasterclassAttendee,
+    MasterclassContent,
+    User,
+    db,
+)
 
 main_bp = Blueprint("main_bp", __name__)
 
@@ -55,12 +62,12 @@ def signup_confirmation():
     return render_template('signup-confirmation.html', masterclass=masterclass)
 
 
-@main_bp.route('/my_masterclasses', methods=['GET'])
+@main_bp.route('/my-masterclasses', methods=['GET'])
 @login_required
 def my_masterclasses():
     user = current_user
-    booked_masterclasses = user.booked_masterclasses
-    return render_template('my-masterclasses.html')
+    booked_masterclasses = user.get_booked_masterclasses()
+    return render_template('my-masterclasses.html', booked_masterclasses=booked_masterclasses)
 
 
 @main_bp.route('/create-masterclass', methods=['GET', 'POST'])
