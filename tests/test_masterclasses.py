@@ -3,10 +3,8 @@ import pytest
 from flask import session, template_rendered, url_for
 from contextlib import contextmanager
 from datetime import datetime
-from app import create_app
-from app import db as _db
-from config import *
-from app.models import MasterclassContent, Masterclass, Location, User
+
+from app.models import Location, Masterclass, MasterclassContent
 
 
 @pytest.fixture
@@ -230,3 +228,17 @@ def test_new_location_added_to_db(logged_in_user, test_masterclass, blank_sessio
     new_location = Location.query.filter_by(maps_id="123").first()
     assert response.status_code == 302
     assert test_masterclass.location_id == new_location.id
+
+
+def test_add_in_person_details(logged_in_user, test_masterclass, blank_session):
+    with logged_in_user.session_transaction() as session:
+        session["draft_masterclass_id"] = 1
+    response = logged_in_user.post(
+        "/create-masterclass/location/details",
+        data={"room": "1D", "floor": "1", "building_instructions": "Some instructions"},
+    )
+    assert response.status_code == 302
+    assert test_masterclass.room == "1D"
+    assert test_masterclass.floor == "1"
+    assert test_masterclass.building_instructions == "Some instructions"
+    assert test_masterclass.is_remote == False

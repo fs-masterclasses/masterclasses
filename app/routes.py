@@ -1,4 +1,14 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint, session, Response
+from flask import (
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    Response,
+    session,
+    url_for,
+)
+
 from flask_login import current_user, login_user, login_required, logout_user
 
 from app.models import (
@@ -217,7 +227,16 @@ def location_search_results():
     )
 
 
-@main_bp.route("/create-masterclass/location/details", methods=["GET"])
+@main_bp.route("/create-masterclass/location/details", methods=["GET", "POST"])
 @login_required
 def add_in_person_location_details():
+    if request.method == "POST":
+        draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
+        draft_masterclass.room = request.form["room"]
+        draft_masterclass.floor = request.form["floor"]
+        draft_masterclass.building_instructions = request.form["building_instructions"]
+        draft_masterclass.update_remote_status(False)
+        db.session.add(draft_masterclass)
+        db.session.commit()
+        return redirect(url_for("main_bp.index"))
     return render_template("create-masterclass/location/in-person-details.html")
