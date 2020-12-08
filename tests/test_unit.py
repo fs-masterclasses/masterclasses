@@ -2,9 +2,6 @@ from app.models import MasterclassAttendee, User
 
 import pytest
 
-# Re-write as unit tests
-# Start with adding new objects from scratch instead of starting with factories
-
 
 def test_get_booked_masterclasses_when_not_signed_up():
     """Test empty list is returned if a user has no booked masterclasses."""
