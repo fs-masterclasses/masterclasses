@@ -129,3 +129,29 @@ def create_new_content():
             return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
     else:
         return render_template('create-masterclass/content/create-new.html')
+
+
+@main_bp.route("/create-masterclass/location/type", methods=["GET", "POST"])
+@login_required
+def choose_location_type():
+    if request.method == "POST":
+        if request.form["location-type"] == "online":
+            return redirect(url_for("main_bp.add_online_details"))
+        elif request.form["location-type"] == "in person":
+            return redirect(url_for("main_bp.search_for_location"))
+    else:
+        return render_template(
+            "create-masterclass/location/choose-location-type.html"
+        )
+
+
+@main_bp.route("/create-masterclass/location/online", methods=["GET"])
+@login_required
+def add_online_details():
+    return render_template("create-masterclass/location/online-details.html")
+
+
+@main_bp.route("/create-masterclass/location/search", methods=["GET"])
+@login_required
+def search_for_location():
+    return render_template("create-masterclass/location/search.html")

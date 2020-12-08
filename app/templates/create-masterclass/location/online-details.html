@@ -1,0 +1,31 @@
+{% set back_url=url_for("main_bp.choose_location_type") %}
+{% extends "form-page-base.html" %}
+{% block main_content %}
+  <form action="/create-masterclass/location/online" method="post" novalidate>
+
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+          <h1 class="govuk-fieldset__heading">
+            Joining instructions for your online masterclass
+          </h1>
+        </legend>
+        </br>
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="url">
+              Url to join online
+          </label>
+          <input class="govuk-input" id="url" name="url" type="text">
+        </div>
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="joining_instructions">
+              Joining instructions
+          </label>
+          <textarea class="govuk-textarea" id="joining_instructions" name="joining_instructions" rows="5"></textarea>
+        </div>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">
+      Continue
+    </button>
+  </form>
+{% endblock %}

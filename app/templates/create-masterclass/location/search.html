@@ -1,0 +1,25 @@
+{% set back_url=url_for("main_bp.choose_location_type") %}
+{% extends "form-page-base.html" %}
+{% block main_content %}
+  <form action="/create-masterclass/location/search" method="post" novalidate>
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+          <h1 class="govuk-fieldset__heading">
+            Where will your masterclass take place?
+          </h1>
+        </legend>
+        </br>
+        <div class="govuk-form-group">
+          <span id="more-detail-hint" class="govuk-hint">
+              Search for an address, postcode or building name
+          </span>
+          <input class="govuk-input" id="location" name="location" type="text">
+        </div>
+      </fieldset>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">
+      Search
+    </button>
+  </form>
+{% endblock %}

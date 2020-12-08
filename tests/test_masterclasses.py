@@ -155,3 +155,20 @@ def test_display_my_masterclasses(logged_in_user, test_masterclass_with_details,
     logged_in_user.post(f'/masterclass/{test_masterclass_with_details.id}')
     response = logged_in_user.get('/my-masterclasses')
     assert f'<a class="govuk-link--no-visited-state" href="/masterclass/1">{test_masterclass_with_details.content.name}</a>' in response.get_data(as_text=True)
+
+# Add location tests
+
+
+@pytest.mark.parametrize(
+    "location_type, redirect_url",
+    (("online", "add_online_details"), ("in person", "search_for_location"),),
+)
+def test_redirect_to_correct_template_after_choose_location_type(
+    logged_in_user, location_type, redirect_url
+):
+    response = logged_in_user.post(
+        "/create-masterclass/location/type", data={"location-type": location_type}
+    )
+    assert response.status_code == 302
+    assert response.location == f'http://localhost{url_for(f"main_bp.{redirect_url}")}'
+
