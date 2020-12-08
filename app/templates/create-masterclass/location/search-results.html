@@ -1,0 +1,39 @@
+{% set back_url=url_for("main_bp.search_for_location")  %}
+{% extends "form-page-base.html" %}
+{% block main_content %}
+  <div class="govuk-form-group">
+    <form action="/create-masterclass/location/search/results" method="post" novalidate>
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+            <h1 class="govuk-fieldset__heading">
+              Choose a location
+            </h1>
+          </legend>
+          <span id="choose-masterclass-hint" class="govuk-hint">
+            If the location you're looking for isn't displayed, go back to the previous page and try a more specific search term.
+          </span>
+          </br>
+          <h1 class="govuk-fieldset__heading"></h1>
+          <div class="govuk-radios">
+            {% for result in results %}
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="location-{{result.name}}" name="select-location" type="radio" value={{ results.index(result) }}>
+                <label class="govuk-label govuk-radios__label" for="select-location">
+                  <strong>{{ result.name }}</strong> </br>
+                  {% if is_database_data %}
+                  {{ result.address}}
+                  {% else %}
+                  {{ result.formatted_address }}
+                  {% endif %}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </fieldset>
+        </br>
+        <button class="govuk-button" data-module="govuk-button">
+          Continue
+        </button>
+    </form>
+  </div>
+{% endblock %}

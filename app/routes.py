@@ -2,12 +2,14 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint,
 from flask_login import current_user, login_user, login_required, logout_user
 
 from app.models import (
+    Location,
     Masterclass,
     MasterclassAttendee,
     MasterclassContent,
     User,
     db,
 )
+from app import gmaps
 
 main_bp = Blueprint("main_bp", __name__)
 
@@ -162,7 +164,34 @@ def add_online_details():
     return render_template("create-masterclass/location/online-details.html")
 
 
-@main_bp.route("/create-masterclass/location/search", methods=["GET"])
+@main_bp.route("/create-masterclass/location/search", methods=["GET", "POST"])
 @login_required
 def search_for_location():
+    if request.method == "POST":
+        query = request.form["location"]
+        results = Location.return_existing_location_or_none(query)[0:3]
+        if results:
+            results = [location.to_dict() for location in results]
+            is_database_data = True
+        else:
+            results = gmaps.places(query=query)["results"][0:3]
+            is_database_data = False
+
+        session["location_search_results"] = results
+        session["location_in_db"] = is_database_data
+
+        return redirect(url_for("main_bp.location_search_results"))
+
     return render_template("create-masterclass/location/search.html")
+
+
+@main_bp.route("/create-masterclass/location/search/results", methods=["GET"])
+@login_required
+def location_search_results():
+    results = session["location_search_results"]
+    is_database_data = session["location_in_db"]
+    return render_template(
+        "create-masterclass/location/search-results.html",
+        results=results,
+        is_database_data=is_database_data,
+    )

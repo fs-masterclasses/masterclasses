@@ -184,3 +184,33 @@ def test_add_online_details(logged_in_user, test_masterclass, blank_session):
     assert test_masterclass.is_remote == True
     assert test_masterclass.remote_url == "testing.com"
     assert test_masterclass.remote_joining_instructions == "Please join"
+
+
+@pytest.mark.parametrize(
+    "query_string",
+    (("TEST BUILDING"), ("test"), ("bUiLdInG"), ("SW1"), ("sw1 1re"), ("1re")),
+)
+def test_get_existing_location_from_db_by_query_string_success(
+    logged_in_user, blank_session, test_location, query_string
+):
+    assert (
+        Location.return_existing_location_or_none(query_string)[0].name
+        == "Test building"
+    )
+
+
+def test_get_existing_location_from_db_by_query_string_failure(
+    logged_in_user, blank_session
+):
+    assert Location.return_existing_location_or_none("Nice skyscraper") == []
+
+
+def test_location_search_results_appear_on_page(
+    logged_in_user, blank_session, test_location
+):
+    response = logged_in_user.post(
+        "/create-masterclass/location/search",
+        data={"location": "test building"},
+        follow_redirects=True,
+    )
+    assert "Test building" in response.get_data(as_text=True)
