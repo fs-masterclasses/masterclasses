@@ -18,7 +18,7 @@ def test_content_data_category(db, blank_session):
 
 @pytest.fixture()
 def test_location(db, blank_session):
-    test_location = Location(id=1, name='Test building')
+    test_location = Location(id=1, name='Test building', address='1 Road, SW1 1RE')
     db.session.add(test_location)
     db.session.commit()
     yield test_location
