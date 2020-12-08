@@ -214,3 +214,19 @@ def test_location_search_results_appear_on_page(
         follow_redirects=True,
     )
     assert "Test building" in response.get_data(as_text=True)
+
+
+def test_new_location_added_to_db(logged_in_user, test_masterclass, blank_session):
+    places_api_results = [
+        {"place_id": "123", "name": "A place", "formatted_address": "An address"}
+    ]
+    with logged_in_user.session_transaction() as session:
+        session["draft_masterclass_id"] = 1
+        session["location_search_results"] = places_api_results
+        session["location_in_db"] = False
+    response = logged_in_user.post(
+        "/create-masterclass/location/search/results", data={"select-location": "0"}
+    )
+    new_location = Location.query.filter_by(maps_id="123").first()
+    assert response.status_code == 302
+    assert test_masterclass.location_id == new_location.id

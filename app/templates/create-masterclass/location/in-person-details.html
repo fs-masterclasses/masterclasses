@@ -1,0 +1,39 @@
+{% set back_url=url_for("main_bp.location_search_results") %}
+{% extends "form-page-base.html" %}
+{% block main_content %}
+  <form action="/create-masterclass/location/details" method="POST" novalidate>
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+          <h1 class="govuk-fieldset__heading">
+            Location details
+          </h1>
+        </legend>
+        </br>
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="room">
+              Room number
+          </label>
+          <input class="govuk-input govuk-input--width-10" id="room" name="room" type="text">
+        </div>
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="floor">
+              Floor
+          </label>
+          <input class="govuk-input govuk-input--width-10" id="floor" name="floor" type="text">
+        </div>
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="building_instructions">
+              Instructions for entering the building
+          </label>
+          <span id="more-detail-hint" class="govuk-hint">
+              What do people know to know in order to enter the building, for example can they enter with a cross-government pass?
+          </span>
+          <textarea class="govuk-textarea" id="building_instructions" name="building_instructions" rows="5"></textarea>
+        </div>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">
+      Continue
+    </button>
+  </form>
+{% endblock %}

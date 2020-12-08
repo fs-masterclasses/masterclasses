@@ -185,13 +185,39 @@ def search_for_location():
     return render_template("create-masterclass/location/search.html")
 
 
-@main_bp.route("/create-masterclass/location/search/results", methods=["GET"])
+@main_bp.route("/create-masterclass/location/search/results", methods=["GET", "POST"])
 @login_required
 def location_search_results():
     results = session["location_search_results"]
     is_database_data = session["location_in_db"]
+    if request.method == "POST":
+        draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
+        location = results[int(request.form["select-location"])]
+        if is_database_data:
+            draft_masterclass.location_id = location["id"]
+        else:
+            new_location = Location(
+                maps_id=location["place_id"],
+                name=location["name"],
+                address=location["formatted_address"],
+            )
+            db.session.add(new_location)
+            db.session.commit()
+            draft_masterclass.location_id = new_location.id
+
+        db.session.add(draft_masterclass)
+        db.session.commit()
+
+        return redirect(url_for("main_bp.add_in_person_location_details"))
+
     return render_template(
         "create-masterclass/location/search-results.html",
         results=results,
         is_database_data=is_database_data,
     )
+
+
+@main_bp.route("/create-masterclass/location/details", methods=["GET"])
+@login_required
+def add_in_person_location_details():
+    return render_template("create-masterclass/location/in-person-details.html")
