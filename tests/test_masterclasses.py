@@ -172,3 +172,15 @@ def test_redirect_to_correct_template_after_choose_location_type(
     assert response.status_code == 302
     assert response.location == f'http://localhost{url_for(f"main_bp.{redirect_url}")}'
 
+
+def test_add_online_details(logged_in_user, test_masterclass, blank_session):
+    with logged_in_user.session_transaction() as session:
+        session["draft_masterclass_id"] = 1
+    response = logged_in_user.post(
+        "/create-masterclass/location/online",
+        data={"url": "testing.com", "joining_instructions": "Please join"},
+    )
+    assert response.status_code == 302
+    assert test_masterclass.is_remote == True
+    assert test_masterclass.remote_url == "testing.com"
+    assert test_masterclass.remote_joining_instructions == "Please join"

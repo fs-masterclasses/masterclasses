@@ -86,7 +86,11 @@ class Masterclass(db.Model):
 
     def remaining_spaces(self):
         return self.max_attendees - len(self.attendees)
-        
+
+    def update_remote_status(self, is_remote: bool):
+        self.is_remote = is_remote
+        return None
+
 
 class MasterclassAttendee(db.Model):
     id = db.Column(db.Integer, primary_key=True)

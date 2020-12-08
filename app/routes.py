@@ -145,9 +145,20 @@ def choose_location_type():
         )
 
 
-@main_bp.route("/create-masterclass/location/online", methods=["GET"])
+@main_bp.route("/create-masterclass/location/online", methods=["GET", "POST"])
 @login_required
 def add_online_details():
+    if request.method == "POST":
+        draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
+        draft_masterclass.update_remote_status(True)
+        draft_masterclass.remote_url = request.form["url"]
+        draft_masterclass.remote_joining_instructions = request.form[
+            "joining_instructions"
+        ]
+        db.session.add(draft_masterclass)
+        db.session.commit()
+        return redirect(url_for("main_bp.index"))
+
     return render_template("create-masterclass/location/online-details.html")
 
 
