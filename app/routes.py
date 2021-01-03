@@ -147,6 +147,11 @@ def create_new_content():
 @login_required
 def choose_location_type():
     if request.method == "POST":
+        if not request.form.get("location-type"):
+            return render_template(
+                "create-masterclass/location/choose-location-type.html",
+                validation_error=True
+            ), 403
         if request.form["location-type"] == "online":
             return redirect(url_for("main_bp.add_online_details"))
         elif request.form["location-type"] == "in person":
@@ -161,6 +166,12 @@ def choose_location_type():
 @login_required
 def add_online_details():
     if request.method == "POST":
+        if not request.form.get("url"):
+            return render_template(
+                "create-masterclass/location/online-details.html",
+                validation_error=True,
+                joining_instructions=request.form.get("joining_instructions")
+            ), 403
         draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
         draft_masterclass.update_remote_status(True)
         draft_masterclass.remote_url = request.form["url"]
@@ -178,6 +189,11 @@ def add_online_details():
 @login_required
 def search_for_location():
     if request.method == "POST":
+        if not request.form.get("location"):
+            return render_template(
+                "create-masterclass/location/search.html",
+                validation_error=True
+            ), 403
         query = request.form["location"]
         results = Location.return_existing_location_or_none(query)[0:3]
         if results:
@@ -201,6 +217,13 @@ def location_search_results():
     results = session["location_search_results"]
     is_database_data = session["location_in_db"]
     if request.method == "POST":
+        if not request.form.get("select-location"):
+            return render_template(
+                "create-masterclass/location/search-results.html",
+                validation_error=True,
+                results=results,
+                is_database_data=is_database_data,
+            ), 403
         draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
         location = results[int(request.form["select-location"])]
         if is_database_data:
@@ -231,6 +254,19 @@ def location_search_results():
 @login_required
 def add_in_person_location_details():
     if request.method == "POST":
+        mandatory_fields = ["room", "floor"]
+        filled_fields = [
+            field for field in mandatory_fields if request.form[field] != ''
+        ]
+        if not all(field in filled_fields for field in mandatory_fields):
+            return render_template(
+                "create-masterclass/location/in-person-details.html",
+                validation_error=True,
+                empty_fields=[
+                    field for field in mandatory_fields if field not in filled_fields
+                ],
+                form_data=request.form
+            ), 403
         draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
         draft_masterclass.room = request.form["room"]
         draft_masterclass.floor = request.form["floor"]

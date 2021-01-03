@@ -242,3 +242,45 @@ def test_add_in_person_details(logged_in_user, test_masterclass, blank_session):
     assert test_masterclass.floor == "1"
     assert test_masterclass.building_instructions == "Some instructions"
     assert test_masterclass.is_remote == False
+
+
+@pytest.mark.parametrize(
+    "route, form_data, empty_fields",
+    (
+        ("/create-masterclass/location/type", {}, []),
+        ("/create-masterclass/location/online", {}, []),
+        ("/create-masterclass/location/online", {"joining_instructions": "Test"}, []),
+        ("/create-masterclass/location/search", {}, []),
+        ("/create-masterclass/location/search/results", {}, []),
+        (
+            "/create-masterclass/location/details",
+            {"room": "", "floor": "", "building_instructions": ""},
+            ["room", "floor"]
+        ),
+        (
+            "/create-masterclass/location/details",
+            {"room": "1", "floor": "", "building_instructions": ""},
+            ["floor"]
+        ),
+        (
+            "/create-masterclass/location/details",
+            {"room": "", "floor": "1", "building_instructions": ""},
+            ["room"]
+        ),
+    ),
+)
+def test_handle_empty_location_fields(
+    test_app, logged_in_user, route, form_data, empty_fields
+):
+    """
+    Tests that a 403 error is returned when forms are submitted without
+    required fields and that 'validation_error' and, if multiple fields are
+    mandatory, the 'empty_fields' variable are set in the template context.
+    """
+    with captured_templates(test_app) as templates:
+        response = logged_in_user.post(route, data=form_data)
+        context = templates[0][1]
+    assert response.status_code == 403
+    assert context["validation_error"]
+    if empty_fields:
+        assert context["empty_fields"] == empty_fields
