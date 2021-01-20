@@ -1,0 +1,29 @@
+version: '3'
+services:
+  web:
+    build:
+        .
+    environment: 
+      - DATABASE_URL=postgreql://masterclass_admin:password@db:5432/test_masterclasses
+      - FLASK_APP=masterclasses.py
+      - SECRET_KEY=secret-dev-key
+      - ENV=dev
+    volumes:
+      - ./app:/code/app
+      - ./migrations:/code/migrations
+      - ./tests:/code/tests
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "5000:5000"
+
+  db:
+    image: postgres:9.6
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=masterclass_admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=test_masterclasses
