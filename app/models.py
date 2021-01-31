@@ -88,8 +88,31 @@ class Masterclass(db.Model):
     def remaining_spaces(self):
         return self.max_attendees - len(self.attendees)
 
-    def update_remote_status(self, is_remote: bool):
-        self.is_remote = is_remote
+    def set_location_details(self, data, is_remote):
+        """
+        Set location related fields for a masterclass.
+        """
+        if is_remote:
+            self.set_remote_details(data)
+        else:
+            self.set_in_person_details(data)
+        db.session.add(self)
+        db.session.commit()
+        return None
+
+    def set_remote_details(self, data):
+        self.remote_url = data["url"]
+        if data["joining_instructions"]:
+            self.remote_joining_instructions = data["joining_instructions"]
+        self.is_remote = True
+        return None
+
+    def set_in_person_details(self, data):
+        self.room = data["room"]
+        self.floor = data["floor"]
+        if data["building_instructions"]:
+            self.building_instructions = data["building_instructions"]
+        self.is_remote = False
         return None
 
 
