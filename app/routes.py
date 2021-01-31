@@ -170,16 +170,14 @@ def add_online_details():
             return render_template(
                 "create-masterclass/location/online-details.html",
                 validation_error=True,
-                joining_instructions=request.form.get("joining_instructions")
+                joining_instructions=request.form.get("joining_instructions"),
             ), 403
-        draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
-        draft_masterclass.update_remote_status(True)
-        draft_masterclass.remote_url = request.form["url"]
-        draft_masterclass.remote_joining_instructions = request.form[
-            "joining_instructions"
-        ]
-        db.session.add(draft_masterclass)
-        db.session.commit()
+        draft_masterclass = Masterclass.query.get(
+            session["draft_masterclass_id"]
+        )
+        draft_masterclass.set_location_details(
+            data=request.form, is_remote=True,
+        )
         return redirect(url_for("main_bp.index"))
 
     return render_template("create-masterclass/location/online-details.html")
@@ -268,11 +266,6 @@ def add_in_person_location_details():
                 form_data=request.form
             ), 403
         draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
-        draft_masterclass.room = request.form["room"]
-        draft_masterclass.floor = request.form["floor"]
-        draft_masterclass.building_instructions = request.form["building_instructions"]
-        draft_masterclass.update_remote_status(False)
-        db.session.add(draft_masterclass)
-        db.session.commit()
+        draft_masterclass.set_location_details(data=request.form, is_remote=False)
         return redirect(url_for("main_bp.index"))
     return render_template("create-masterclass/location/in-person-details.html")
