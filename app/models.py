@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from typing import List, Union
 from sqlalchemy import or_
+from sqlalchemy_serializer import SerializerMixin
 
 
 class User(UserMixin, db.Model):   # User inherits from db.Model, a base class for all models from Flask-sqlalchemy
@@ -47,7 +48,7 @@ class MasterclassContent(db.Model):
         return '<MasterclassContent {}>'.format(self.name)
 
 
-class Location(db.Model):
+class Location(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     building = db.Column(db.String(50), index=True)
     street_number = db.Column(db.String(10)) # should keep numbers as strings unless going to do calculations?
@@ -86,7 +87,34 @@ class Masterclass(db.Model):
 
     def remaining_spaces(self):
         return self.max_attendees - len(self.attendees)
-        
+
+    def set_location_details(self, data, is_remote):
+        """
+        Set location related fields for a masterclass.
+        """
+        if is_remote:
+            self.set_remote_details(data)
+        else:
+            self.set_in_person_details(data)
+        db.session.add(self)
+        db.session.commit()
+        return None
+
+    def set_remote_details(self, data):
+        self.remote_url = data["url"]
+        if data["joining_instructions"]:
+            self.remote_joining_instructions = data["joining_instructions"]
+        self.is_remote = True
+        return None
+
+    def set_in_person_details(self, data):
+        self.room = data["room"]
+        self.floor = data["floor"]
+        if data["building_instructions"]:
+            self.building_instructions = data["building_instructions"]
+        self.is_remote = False
+        return None
+
 
 class MasterclassAttendee(db.Model):
     id = db.Column(db.Integer, primary_key=True)

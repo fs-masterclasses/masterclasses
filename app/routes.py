@@ -1,13 +1,25 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint, session, Response
+from flask import (
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
+    request,
+    Response,
+    session,
+    url_for,
+)
+
 from flask_login import current_user, login_user, login_required, logout_user
 
 from app.models import (
+    Location,
     Masterclass,
     MasterclassAttendee,
     MasterclassContent,
     User,
     db,
 )
+from app import gmaps
 
 main_bp = Blueprint("main_bp", __name__)
 
@@ -129,3 +141,131 @@ def create_new_content():
             return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
     else:
         return render_template('create-masterclass/content/create-new.html')
+
+
+@main_bp.route("/create-masterclass/location/type", methods=["GET", "POST"])
+@login_required
+def choose_location_type():
+    if request.method == "POST":
+        if not request.form.get("location-type"):
+            return render_template(
+                "create-masterclass/location/choose-location-type.html",
+                validation_error=True
+            ), 403
+        if request.form["location-type"] == "online":
+            return redirect(url_for("main_bp.add_online_details"))
+        elif request.form["location-type"] == "in person":
+            return redirect(url_for("main_bp.search_for_location"))
+    else:
+        return render_template(
+            "create-masterclass/location/choose-location-type.html"
+        )
+
+
+@main_bp.route("/create-masterclass/location/online", methods=["GET", "POST"])
+@login_required
+def add_online_details():
+    if request.method == "POST":
+        if not request.form.get("url"):
+            return render_template(
+                "create-masterclass/location/online-details.html",
+                validation_error=True,
+                joining_instructions=request.form.get("joining_instructions"),
+            ), 403
+        draft_masterclass = Masterclass.query.get(
+            session["draft_masterclass_id"]
+        )
+        draft_masterclass.set_location_details(
+            data=request.form, is_remote=True,
+        )
+        return redirect(url_for("main_bp.index"))
+
+    return render_template("create-masterclass/location/online-details.html")
+
+
+@main_bp.route("/create-masterclass/location/search", methods=["GET", "POST"])
+@login_required
+def search_for_location():
+    if request.method == "POST":
+        if not request.form.get("location"):
+            return render_template(
+                "create-masterclass/location/search.html",
+                validation_error=True
+            ), 403
+        query = request.form["location"]
+        results = Location.return_existing_location_or_none(query)[0:3]
+        if results:
+            results = [location.to_dict() for location in results]
+            is_database_data = True
+        else:
+            results = gmaps.places(query=query)["results"][0:3]
+            is_database_data = False
+
+        session["location_search_results"] = results
+        session["location_in_db"] = is_database_data
+
+        return redirect(url_for("main_bp.location_search_results"))
+
+    return render_template("create-masterclass/location/search.html")
+
+
+@main_bp.route("/create-masterclass/location/search/results", methods=["GET", "POST"])
+@login_required
+def location_search_results():
+    results = session["location_search_results"]
+    is_database_data = session["location_in_db"]
+    if request.method == "POST":
+        if not request.form.get("select-location"):
+            return render_template(
+                "create-masterclass/location/search-results.html",
+                validation_error=True,
+                results=results,
+                is_database_data=is_database_data,
+            ), 403
+        draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
+        location = results[int(request.form["select-location"])]
+        if is_database_data:
+            draft_masterclass.location_id = location["id"]
+        else:
+            new_location = Location(
+                maps_id=location["place_id"],
+                name=location["name"],
+                address=location["formatted_address"],
+            )
+            db.session.add(new_location)
+            db.session.commit()
+            draft_masterclass.location_id = new_location.id
+
+        db.session.add(draft_masterclass)
+        db.session.commit()
+
+        return redirect(url_for("main_bp.add_in_person_location_details"))
+
+    return render_template(
+        "create-masterclass/location/search-results.html",
+        results=results,
+        is_database_data=is_database_data,
+    )
+
+
+@main_bp.route("/create-masterclass/location/details", methods=["GET", "POST"])
+@login_required
+def add_in_person_location_details():
+    if request.method == "POST":
+        mandatory_fields = ["room", "floor"]
+        filled_fields = [
+            field for field in mandatory_fields if request.form[field] != ''
+        ]
+        if not all(field in filled_fields for field in mandatory_fields):
+            return render_template(
+                "create-masterclass/location/in-person-details.html",
+                validation_error=True,
+                empty_fields=[
+                    field for field in mandatory_fields if field not in filled_fields
+                ],
+                form_data=request.form
+            ), 403
+        draft_masterclass = Masterclass.query.get(session["draft_masterclass_id"])
+        draft_masterclass.set_location_details(data=request.form, is_remote=False)
+        return redirect(url_for("main_bp.index"))
+    return render_template("create-masterclass/location/in-person-details.html")
