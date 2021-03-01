@@ -2,7 +2,7 @@ from flask import url_for
 
 from app import create_app
 from app import db as _db
-from app.models import Masterclass, User
+from app.models import Masterclass, MasterclassContent, User
 from config import TestConfig
 
 import pytest
@@ -88,3 +88,10 @@ def test_masterclass(db, blank_session):
     db.session.add(m)
     db.session.commit()
     yield m
+
+@pytest.fixture
+def test_content(db, blank_session):
+    mc = MasterclassContent(id=1, name='Introduction to R', description='This masterclass will give you a solid understanding of how to run queries using R.', category='Data')
+    db.session.add(mc)
+    db.session.commit()
+    yield mc

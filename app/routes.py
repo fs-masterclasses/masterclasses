@@ -90,55 +90,50 @@ def create_masterclass_start():
         db.session.add(new_masterclass)
         db.session.commit()
         session['draft_masterclass_id'] = new_masterclass.id
-        return render_template('create-masterclass/content/choose-ddat-family.html')
+        return redirect(url_for("main_bp.choose_new_or_existing_content"))
     return render_template('create-masterclass/start.html')
 
 
-@main_bp.route('/create-masterclass/content/job-family', methods=['GET', 'POST'])
-@login_required
-def choose_job_family():
-    if request.method == 'GET':
-        return render_template('create-masterclass/content/choose-ddat-family.html')
-    elif request.method == 'POST':    
-        chosen_job_family = request.form['select-job-family']
-        session['job_family'] = chosen_job_family
-        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
-        return render_template('create-masterclass/content/new-or-existing.html',  existing_masterclasses=existing_masterclasses)
-
-
-@main_bp.route('/create-masterclass/content/new-or-existing', methods=['GET', 'POST'])
+@main_bp.route("/create-masterclass/content/new-or-existing", methods=["GET", "POST"])
 @login_required
 def choose_new_or_existing_content():
-    if request.method == 'POST':
-        choice = request.form['which-masterclass']
-        if choice =="new masterclass":
-            return render_template('create-masterclass/content/create-new.html')
+    if request.method == "POST":
+        choice = request.form["which-masterclass"]
+        if choice == "new masterclass":
+            return render_template("create-masterclass/content/create-new.html")
         else:
-            draft_masterclass = Masterclass.query.filter_by(id=session['draft_masterclass_id']).first()
+            draft_masterclass = Masterclass.query.filter_by(
+                id=session["draft_masterclass_id"]
+            ).first()
             draft_masterclass.masterclass_content_id = int(choice)
             db.session.add(draft_masterclass)
             db.session.commit()
-            return redirect(url_for('main_bp.index'))
-    elif request.method == 'GET':
-        chosen_job_family = session['job_family']
-        existing_masterclasses = MasterclassContent.query.filter_by(category=chosen_job_family)
-        return render_template('create-masterclass/content/new-or-existing.html', existing_masterclasses=existing_masterclasses)
+            return redirect(url_for("main_bp.index"))
+    elif request.method == "GET":
+        existing_masterclasses = current_user.get_masterclass_content_run_before()
+        return render_template(
+            "create-masterclass/content/new-or-existing.html",
+            existing_masterclasses=existing_masterclasses,
+        )
     else:
-        return Response(status_code=405) 
+        return Response(status_code=405)
 
 
 @main_bp.route('/create-masterclass/content/create-new', methods=['GET', 'POST'])
 @login_required
 def create_new_content():
     if request.method == 'POST':
-            new_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
-            db.session.add(new_content) 
-            db.session.commit()
-            draft_masterclass = Masterclass.query.get(session['draft_masterclass_id'])
-            draft_masterclass.masterclass_content_id = new_content.id
-            db.session.add(draft_masterclass)
-            db.session.commit()
-            return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
+        new_content = MasterclassContent(
+            name=request.form['masterclass-name'],
+            description=request.form['masterclass-description']
+        )
+        db.session.add(new_content)
+        db.session.commit()
+        draft_masterclass = Masterclass.query.get(session['draft_masterclass_id'])
+        draft_masterclass.masterclass_content_id = new_content.id
+        db.session.add(draft_masterclass)
+        db.session.commit()
+        return redirect(url_for('main_bp.index'))
     else:
         return render_template('create-masterclass/content/create-new.html')
 

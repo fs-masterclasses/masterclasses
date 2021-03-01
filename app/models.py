@@ -32,6 +32,15 @@ class User(UserMixin, db.Model):   # User inherits from db.Model, a base class f
         """
         return [bm.masterclass for bm in self.booked_masterclasses]
 
+    def get_masterclass_content_run_before(self) -> List['MasterclassContent']:
+        """
+        Returns a list of masterclass content objects attached to the masterclasses
+        a user has previously instructed.
+        """
+        masterclasses_run = self.masterclasses_run.all()
+        return [m.content for m in masterclasses_run if masterclasses_run]
+
+
     @login.user_loader
     def load_user(id):
         return User.query.get(int(id))

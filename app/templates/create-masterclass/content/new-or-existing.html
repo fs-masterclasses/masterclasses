@@ -16,10 +16,10 @@
                 </h1>
               </legend>
               <span id="choose-masterclass-hint" class="govuk-hint">
-                Choose an existing masterclass to run or create a new one.
+                Choose a masterclass you have run before or create a new one.
               </span>
               <div class="govuk-radios">
-                {% for masterclass in existing_masterclasses %}
+                {% for masterclass in existing_masterclasses|sort(attribute="name") %}
                     <div class="govuk-radios__item">
                         <input class="govuk-radios__input" id="existing-masterclass" name="which-masterclass" type="radio" value={{masterclass.id}}>
                         <label class="govuk-label govuk-radios__label" for="select-job-family">
