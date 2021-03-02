@@ -116,6 +116,13 @@ class Masterclass(db.Model):
         self.is_remote = False
         return None
 
+    def create_new_masterclass_content_and_attach(self, content_name: str, content_description:str):
+        new_content = MasterclassContent(name=content_name, description=content_description)
+        self.masterclass_content = new_content
+        db.session.add(self)
+        db.session.commit()
+        return None
+
 
 class MasterclassAttendee(db.Model):
     id = db.Column(db.Integer, primary_key=True)

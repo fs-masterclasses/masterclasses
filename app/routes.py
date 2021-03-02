@@ -131,11 +131,10 @@ def choose_new_or_existing_content():
 @login_required
 def create_new_content():
     if request.method == 'POST':
-            new_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
             draft_masterclass = Masterclass.query.get(session['draft_masterclass_id'])
-            draft_masterclass.masterclass_content = new_content
-            db.session.add(draft_masterclass)
-            db.session.commit()
+            draft_masterclass.create_new_masterclass_content_and_attach(
+                content_name=request.form['masterclass-name'], content_description=request.form['masterclass-description']
+            )
             return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
     else:
         return render_template('create-masterclass/content/create-new.html')
