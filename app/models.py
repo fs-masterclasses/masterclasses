@@ -83,6 +83,7 @@ class Masterclass(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     attendees = db.relationship('MasterclassAttendee', backref='masterclass')
+    masterclass_content = db.relationship('MasterclassContent')
     draft = db.Column(db.Boolean, default=True)
 
     def remaining_spaces(self):

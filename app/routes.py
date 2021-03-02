@@ -132,10 +132,8 @@ def choose_new_or_existing_content():
 def create_new_content():
     if request.method == 'POST':
             new_content = MasterclassContent(name = request.form['masterclass-name'], description = request.form['masterclass-description'])
-            db.session.add(new_content) 
-            db.session.commit()
             draft_masterclass = Masterclass.query.get(session['draft_masterclass_id'])
-            draft_masterclass.masterclass_content_id = new_content.id
+            draft_masterclass.masterclass_content = new_content
             db.session.add(draft_masterclass)
             db.session.commit()
             return redirect(url_for('main_bp.index')) # TODO will take them back to task list page
