@@ -97,8 +97,15 @@ def create_masterclass_start():
 @main_bp.route("/create-masterclass/content/new-or-existing", methods=["GET", "POST"])
 @login_required
 def choose_new_or_existing_content():
+    existing_masterclasses = current_user.get_masterclass_content_run_before()
     if request.method == "POST":
-        choice = request.form["which-masterclass"]
+        choice = request.form.get("which-masterclass")
+        if not choice:
+            return render_template(
+                "create-masterclass/content/new-or-existing.html",
+                existing_masterclasses=existing_masterclasses,
+                validation_error=True
+            )
         if choice == "new masterclass":
             return render_template("create-masterclass/content/create-new.html")
         else:
@@ -110,7 +117,6 @@ def choose_new_or_existing_content():
             db.session.commit()
             return redirect(url_for("main_bp.index"))
     elif request.method == "GET":
-        existing_masterclasses = current_user.get_masterclass_content_run_before()
         return render_template(
             "create-masterclass/content/new-or-existing.html",
             existing_masterclasses=existing_masterclasses,
@@ -123,6 +129,7 @@ def choose_new_or_existing_content():
 @login_required
 def create_new_content():
     if request.method == 'POST':
+        print('FORM', request.form)
         new_content = MasterclassContent(
             name=request.form['masterclass-name'],
             description=request.form['masterclass-description']
